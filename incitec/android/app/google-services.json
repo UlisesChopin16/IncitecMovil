@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "1036707976082",
+    "project_id": "incitec-5ebe0",
+    "storage_bucket": "incitec-5ebe0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036707976082:android:dd87ad726236e1459c674b",
+        "android_client_info": {
+          "package_name": "com.example.incidencias_reportes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1036707976082-khgktu866lqsctfe0cn7ddls4pse0rgh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzguJ_ZP5wOP-pg74ijiMsb3yAp3MSFv0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1036707976082-khgktu866lqsctfe0cn7ddls4pse0rgh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1036707976082-6v3qkqdm1ep9drf7d9m2oe03ghdetveu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.incidenciasReportes"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036707976082:android:511234903f9c6caf9c674b",
+        "android_client_info": {
+          "package_name": "com.example.incitec"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1036707976082-khgktu866lqsctfe0cn7ddls4pse0rgh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzguJ_ZP5wOP-pg74ijiMsb3yAp3MSFv0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1036707976082-khgktu866lqsctfe0cn7ddls4pse0rgh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1036707976082-6v3qkqdm1ep9drf7d9m2oe03ghdetveu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.incidenciasReportes"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
