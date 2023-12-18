@@ -53,7 +53,7 @@ class FirebaseServicesInciTec extends GetxController {
   }
 
   Future<bool> agregarReporte({
-    required DateTime fecha,
+    required String fecha,
     required String descripcion,
     required String ubicacion,
     required String estado,
@@ -66,7 +66,7 @@ class FirebaseServicesInciTec extends GetxController {
   }) async{
     try {
       loading.value = true;
-      await firestore.collection('reportes').doc(DateTime.now().toString()).set({
+      await firestore.collection('reportes').doc(fecha).set({
         "incidencia": incidencia,
         "descripcion": descripcion,
         "fecha": fecha,
@@ -85,13 +85,11 @@ class FirebaseServicesInciTec extends GetxController {
     }
   }
 
-  Future<String> subirImagen(File imagen,BuildContext context) async {
+  Future<String> subirImagen(File imagen,String nombre,BuildContext context) async {
 
     loading.value = true;
 
-    final String fileName = imagen.path.split('/').last;
-
-    final Reference ref = storage.ref().child('reportes').child(fileName);
+    final Reference ref = storage.ref().child('reportes').child(nombre);
     final UploadTask uploadTask = ref.putFile(imagen);
     Future.delayed(const Duration(seconds: 20)).then((value) {
       if(loading.value){

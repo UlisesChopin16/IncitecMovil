@@ -488,15 +488,14 @@ class _SubirReporteState extends State<SubirReporte> {
           }
 
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte...')));
-
+          DateTime fecha = DateTime.now();
           // estampa de tiempo
-          String data = await servicios.subirImagen(imagen!,context);
+          String data = await servicios.subirImagen(imagen!,fecha.toString(),context);
           if(data != ''){ 
-            DateTime fecha = DateTime.now();
             bool data2 = await servicios.agregarReporte(
               incidencia: incidencia,
               descripcion: descripcion, 
-              fecha: fecha,
+              fecha: fecha.toString(),
               ubicacion: edificios, 
               estado: 'Pendiente', 
               imagen: data,
