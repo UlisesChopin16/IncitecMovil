@@ -5,8 +5,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:incitec/Models/reportes_model.dart';
-import 'package:incitec/Views/categorias_view.dart';
 import 'package:incitec/Views/subir_reporte_view.dart';
 
 class FirebaseServicesInciTec extends GetxController {
@@ -17,7 +15,6 @@ class FirebaseServicesInciTec extends GetxController {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
-   var getDataReportes = GetDataModelReportes(reportes: []).obs;
 
   var datosAlumno = <String,dynamic>{}.obs;
   var datosCarrera = <String,dynamic>{}.obs;
@@ -55,27 +52,6 @@ class FirebaseServicesInciTec extends GetxController {
     );
   }
 
-  
-  Future<void> getReportes({required String categoria}) async {
-    loading.value = true;
-    
-    Map<String, List<Map<String, dynamic>>> resultMap = {};
-
-    List<Map<String, dynamic>> reportesList = [];
-
-    CollectionReference reportesRef = firestore.collection('reportes');
-
-    QuerySnapshot querySnapshot = await reportesRef.where('categoria',isEqualTo: categoria).get();
-
-    querySnapshot.docs.forEach((element) {
-      reportesList.add(element.data() as Map<String, dynamic>);
-    });
-
-    resultMap['Reportes'] = reportesList;
-    getDataReportes.value = GetDataModelReportes.fromJson(resultMap);
-    loading.value = false;
-  }
-
   Future<bool> agregarReporte({
     required DateTime fecha,
     required String descripcion,
@@ -107,7 +83,7 @@ class FirebaseServicesInciTec extends GetxController {
     }
   }
 
-  Future<String> subirImagen(File imagen) async {
+  Future<String> subirImagen(File imagen,BuildContext context) async {
 
     loading.value = true;
 
@@ -119,6 +95,8 @@ class FirebaseServicesInciTec extends GetxController {
     final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => true);
 
     if(taskSnapshot.state == TaskState.success){
+      if(!context.mounted) return 'false';
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte...')));
       final String url = await taskSnapshot.ref.getDownloadURL();
       loading.value = false;
       return url;

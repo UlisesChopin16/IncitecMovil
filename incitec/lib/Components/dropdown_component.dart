@@ -7,7 +7,7 @@ class DropdownComponent extends StatelessWidget {
   final String label;
   final String hint;
   final String? value;
-  final String? Function(dynamic)? validator;
+  final String? Function(String?)? validator;
   final Function(dynamic)? onChanged;
   const DropdownComponent({ 
     Key? key,
@@ -16,7 +16,7 @@ class DropdownComponent extends StatelessWidget {
     required this.validator,
     required this.onChanged,
     required this.hint,
-    required this.value,
+    this.value,
     this.focusNode,
   }) : super(key: key);
 

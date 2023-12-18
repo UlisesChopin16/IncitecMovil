@@ -219,9 +219,29 @@ class _SubirReporteState extends State<SubirReporte> {
       descripcion = selectedValue!;
     });
   }
+  String? edificiosValidator(dynamic value){
+    if (edificios.isEmpty || edificios.trim() == '') {
+      return 'Campo obligatorio *';
+    }
+    return null;
+  }
 
-  String? validator(dynamic value){
-    if (value.isEmpty || value.trim() == '') {
+  String? categoriaValidator(dynamic value){
+    if (categoria.isEmpty || categoria.trim() == '') {
+      return 'Campo obligatorio *';
+    }
+    return null;
+  }
+
+  String? incidenciaValidator(dynamic value){
+    if (incidencia.isEmpty || incidencia.trim() == '') {
+      return 'Campo obligatorio *';
+    }
+    return null;
+  }
+
+  String? validator(String? value){
+    if (value == null || value.trim() == '' || value.isEmpty) {
       return 'Campo obligatorio *';
     }
     return null;
@@ -283,7 +303,7 @@ class _SubirReporteState extends State<SubirReporte> {
                         // imagen == null ? Center() : Image.file(imagen!),
                         const SizedBox(height: 20,),
                         botonSubirReporte(),
-                        const SizedBox(height: 20,),
+                        const SizedBox(height: 60,),
                       ],
                     ),
                   ),
@@ -337,12 +357,11 @@ class _SubirReporteState extends State<SubirReporte> {
   dropEdifcios(){
     return DropdownComponent(
       label: 'Edificio',
-      value: edificios.isEmpty ? null : edificios,
       items: listaEdificios.map((e) => DropdownMenuItem(
         value: e,
         child: Text(e),
       )).toList(),
-      validator: validator,
+      validator: edificiosValidator,
       onChanged: edificiosOnChanged,
       hint: 'Edificio 1',
     );
@@ -351,12 +370,11 @@ class _SubirReporteState extends State<SubirReporte> {
   dropCategoria(){
     return DropdownComponent(
       label: 'Categoría',
-      value: categoria.isEmpty ? null : categoria,
       items: listaCategorias.map((e) => DropdownMenuItem(
         value: e,
         child: Text(e),
       )).toList(),
-      validator: validator,
+      validator: edificiosValidator,
       onChanged: categoriasOnChanged,
       hint: 'Energía Eléctrica',
     );
@@ -365,13 +383,16 @@ class _SubirReporteState extends State<SubirReporte> {
   dropIncidencias(){
     return DropdownComponent(
       label: 'Incidencia',
-      value: selectedCategory ? listadoIncidenciasPorCategoria[categoria]![0] : null,
+      value: 
+            selectedCategory ? 
+              incidencia.isNotEmpty ? listadoIncidenciasPorCategoria[categoria]![0] : null 
+            : null,
       items: selectedCategory ? listadoIncidenciasPorCategoria[categoria]!.map((e) => DropdownMenuItem(
         value: e,
         child: Text(e),
       )).toList() : null,
       onChanged: selectedCategory ? incidenciaOnChanged : null,
-      validator: validator,
+      validator: incidenciaValidator,
       hint: 'Foco prendido',
     );
   }
@@ -466,11 +487,11 @@ class _SubirReporteState extends State<SubirReporte> {
             return;
           }
 
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte')));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte...')));
 
           // estampa de tiempo
-          String data = await servicios.subirImagen(imagen!);
-          if(data != ''){
+          String data = await servicios.subirImagen(imagen!, context);
+          if(data != ''){ 
             DateTime fecha = DateTime.now();
             bool data2 = await servicios.agregarReporte(
               descripcion: descripcion, 
@@ -510,7 +531,24 @@ class _SubirReporteState extends State<SubirReporte> {
         }
         // Navigator.of(context).pop();
       }, 
-      child: const Text('Subir Reporte')
+      child:const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: FittedBox(
+          child: Row(
+            children: [
+              Text(
+                'Subir Reporte',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(width: 10,),
+              Icon(Icons.upload)
+            ],
+          ),
+        ),
+      )
     );
   }
 

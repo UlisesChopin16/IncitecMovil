@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 //import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:incitec/Constants/colors.dart';
-import 'package:incitec/Views/listado_reportes_view.dart';
 import 'package:incitec/Views/login_view.dart';
 import 'package:incitec/firebase_options.dart';
 
@@ -37,13 +36,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Palette.blueTec,
         useMaterial3: false,
       ),
-      // home: const ReportesPage(cat: 'Energía Eléctrica', path:  'assets/energia.jpg')
       home: const LoginPage()
-      // home: const Prueba()
-      //  home: const CategoriasPage(),
-      //home: const Graphics(),
-      // home: const GraficosPage(),
-      // home: const SubirReporte(),
     );
   }
 }
