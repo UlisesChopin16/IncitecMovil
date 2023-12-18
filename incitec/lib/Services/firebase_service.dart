@@ -62,10 +62,12 @@ class FirebaseServicesInciTec extends GetxController {
     required String nombreCompleto,
     required String numeroControl,
     required String carrera,
+    required String incidencia
   }) async{
     try {
       loading.value = true;
       await firestore.collection('reportes').add({
+        "incidencia": incidencia,
         "descripcion": descripcion,
         "fecha": fecha,
         "ubicacion": ubicacion,

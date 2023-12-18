@@ -494,6 +494,7 @@ class _SubirReporteState extends State<SubirReporte> {
           if(data != ''){ 
             DateTime fecha = DateTime.now();
             bool data2 = await servicios.agregarReporte(
+              incidencia: incidencia,
               descripcion: descripcion, 
               fecha: fecha,
               ubicacion: edificios, 
