@@ -66,7 +66,7 @@ class FirebaseServicesInciTec extends GetxController {
   }) async{
     try {
       loading.value = true;
-      await firestore.collection('reportes').add({
+      await firestore.collection('reportes').doc(DateTime.now().toString()).set({
         "incidencia": incidencia,
         "descripcion": descripcion,
         "fecha": fecha,
@@ -93,12 +93,15 @@ class FirebaseServicesInciTec extends GetxController {
 
     final Reference ref = storage.ref().child('reportes').child(fileName);
     final UploadTask uploadTask = ref.putFile(imagen);
-
+    Future.delayed(const Duration(seconds: 20)).then((value) {
+      if(loading.value){
+        if(!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte...')));
+      }
+    });
     final TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => true);
 
     if(taskSnapshot.state == TaskState.success){
-      if(!context.mounted) return 'false';
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte...')));
       final String url = await taskSnapshot.ref.getDownloadURL();
       loading.value = false;
       return url;
