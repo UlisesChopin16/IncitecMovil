@@ -39,12 +39,12 @@ class MyBarGraph extends StatelessWidget{
           ),
         barGroups: myBarData.barData
         .map((data) {
-            List<Color> colors = [
-              Color.fromRGBO(45, 48, 145, 1),
+            List<Color> colors = const [
+              Color.fromRGBO(119, 121, 177, 1),
               Color.fromRGBO(51, 55, 156, 1),
               Color.fromRGBO(19, 26, 218, 1),
               Color.fromRGBO(115, 119, 241, 1)
-            ];
+            ]; 
             return BarChartGroupData(
               x: data.x,
               barRods: [

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 //import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:incitec/Constants/colors.dart';
+import 'package:incitec/Views/lista_reportes_view.dart';
 import 'package:incitec/Views/login_view.dart';
 import 'package:incitec/firebase_options.dart';
 
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: false,
       ),
       home: const LoginPage()
+      // home: const ReportesPage(cat: 'Energía Eléctrica', path:  'assets/energia.jpg')
     );
   }
 }

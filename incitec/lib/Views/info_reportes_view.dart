@@ -52,6 +52,12 @@ class _InfoReportesPageState extends State<InfoReportesPage> {
   String estado = '';
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+  }
+
+  @override
   void initState() {
     super.initState();
     estado = widget.estado;
@@ -79,7 +85,7 @@ class _InfoReportesPageState extends State<InfoReportesPage> {
   }
 
   // metodo para mostrar mensaje emergente de si esta de acuerdo en cambiar el estado de En revision a Revisado
-  void mostrarDialogo() {
+  void mostrarDialogo(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -95,12 +101,13 @@ class _InfoReportesPageState extends State<InfoReportesPage> {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.of(context).pop(); // Cierra el diálogo
                 await servicios.updateReporte(index: widget.index, id: widget.fecha, nuevoEstado: 'Revisado', context: context);
                 setState(() {
                   cambioEstado = true;
                   estado = 'Revisado';
                 });
+                if(!context.mounted)return;
+                Navigator.of(context).pop(); // Cierra el diálogo
               },
               child: const Text('Aceptar'),
             ),
@@ -153,7 +160,7 @@ class _InfoReportesPageState extends State<InfoReportesPage> {
             ),
             if(!cambioEstado)
               IconButton(
-                onPressed: mostrarDialogo,
+                onPressed: () => mostrarDialogo(context),
                 icon: const Icon(Icons.check)
               ),
           ],

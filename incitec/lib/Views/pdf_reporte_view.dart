@@ -56,18 +56,6 @@ class _PdfReporteViewState extends State<PdfReporteView> {
                   canChangePageFormat: false,
                   canChangeOrientation: false,
                   allowSharing: false,
-                  maxPageWidth: width * 0.6,
-                  pdfPreviewPageDecoration: const BoxDecoration(
-                    color: Colors.black,
-                  ),
-                  actions: [
-                    IconButton(
-                      onPressed: (){
-                        Printing.sharePdf(bytes: servicios.pdf.value, filename: '${widget.id}.pdf');
-                      }, 
-                      icon: const Icon(Icons.download)
-                    ),
-                  ],
                 ),
               )
           ],

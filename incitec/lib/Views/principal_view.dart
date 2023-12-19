@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:incitec/Constants/colors.dart';
 import 'package:incitec/Views/graficos_view.dart';
 import 'package:incitec/Views/lista_reportes_view.dart';
 import 'package:incitec/Views/subir_reporte_view.dart';
@@ -34,7 +35,11 @@ class _CategoriasPageState extends State<CategoriasPage> {
       drawer: Drawer(
         child: ListView(
           children: [
-            circuloPerfil(),
+            partePerfil(
+              nombre: servicios.nombre.value,
+              email: servicios.email.value,
+              iniciales: servicios.iniciales.value,
+            ),
             ListTile(
               title: const Text('Subir reporte'),
               onTap: () {
@@ -63,19 +68,6 @@ class _CategoriasPageState extends State<CategoriasPage> {
           width: w > 500 ? 500 : w,
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Buscar',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0)
-                    )
-                  ),
-              
-                ),
-              ),
               Expanded(
                 child: ListView(
                   children: [
@@ -102,30 +94,34 @@ class _CategoriasPageState extends State<CategoriasPage> {
     );
   }
 
-  circuloPerfil(){
+  partePerfil({
+    required String nombre, 
+    required String email,
+    required String iniciales
+  }){
     return SizedBox(
       height: 250,
       child: UserAccountsDrawerHeader(
         decoration: BoxDecoration(
-          color: Colors.blue[800]
+          color: Palette.letras
         ),
-        accountName: const Text('Margarita Sotelo',
-          style: TextStyle(
-              fontSize: 18,
-              color: Colors.white,
-            ),
-        ),
-        accountEmail: Text(servicios.email.value,
+        accountName: Text(nombre,
           style: const TextStyle(
-              fontSize: 18,
+            fontSize: 12,
+            color: Colors.white,
+          ),
+        ),
+        accountEmail: Text(email,
+          style: const TextStyle(
+              fontSize: 12,
               color: Colors.white,
             ),
         ),
         currentAccountPictureSize: const Size(150, 150),
-        currentAccountPicture: const CircleAvatar(
+        currentAccountPicture: CircleAvatar(
           backgroundColor: Colors.black,
-          child: Text('MS',
-            style: TextStyle(
+          child: Text(iniciales,
+            style: const TextStyle(
               fontSize: 80,
               fontWeight: FontWeight.bold,
               color: Colors.white,
