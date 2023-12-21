@@ -9,7 +9,11 @@ import 'package:incitec/Services/firebase_service.dart';
 import 'package:incitec/Views/login_view.dart';
 
 class SubirReporte extends StatefulWidget {
-  const SubirReporte({super.key,});
+  final bool retroceder;
+  const SubirReporte({
+    super.key,
+    required this.retroceder,
+  });
 
   @override
   State<SubirReporte> createState() => _SubirReporteState();
@@ -50,22 +54,37 @@ class _SubirReporteState extends State<SubirReporte> {
     'Otros',
   ];
 
-  Map<String, List<String>> listadoIncidenciasPorCategoria = {
+  Map<String, List<String>> listadoIncidenciasAmbientalesPorCategoria = {
     'Energía Eléctrica': [
       'Foco prendido',
+      'Foco intermitente',
       'Falso contacto',
       'Computadora prendida en el día en salones vacios',
       'Otros',
     ],
     'Agua': [
       'Desperdicio de agua',
+      'Falta de agua',
+      'Manguera rota',
+      'Manguera abierta',
+      'Lavamanos tapado',
+      'Lavamanos roto',
+      'Inodoro con fuga',
+      'Goteras'
       'Otros',
     ],
     'Sustancias peligrosas': [
       'Manguera de gas rota',
+      'Fuga de gas',
+      'Recipientes de químicos abiertos',
+      'Reactivos caducados',
+      'Reactivos tirados en el piso',
       'Otros',
     ],
     'Otros': [
+      'Montañas de basura',
+      'Falta de limpieza',
+      'Falta de mantenimiento',
       'Otros',
     ],
   };
@@ -88,7 +107,7 @@ class _SubirReporteState extends State<SubirReporte> {
     //   'Otros',
     // ],
     if(DateTime.now().hour >= 18){
-      listadoIncidenciasPorCategoria['Energía Eléctrica']!.insert(1, 'Aire acondicionado prendido');
+      listadoIncidenciasAmbientalesPorCategoria['Energía Eléctrica']!.insert(1, 'Aire acondicionado prendido');
     }
 
   }
@@ -264,6 +283,14 @@ class _SubirReporteState extends State<SubirReporte> {
                   email: servicios.email.value,
                   iniciales: servicios.iniciales.value,
                 ),
+                if(widget.retroceder)
+                  ListTile(
+                    title: const Text('Volver a inicio'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ListTile(
                   title: const Text('Cerrar Sesión'),
                   onTap: () {
@@ -385,9 +412,9 @@ class _SubirReporteState extends State<SubirReporte> {
       label: 'Incidencia',
       value: 
             selectedCategory ? 
-              incidencia.isNotEmpty ? listadoIncidenciasPorCategoria[categoria]![0] : null 
+              incidencia.isNotEmpty ? listadoIncidenciasAmbientalesPorCategoria[categoria]![0] : null 
             : null,
-      items: selectedCategory ? listadoIncidenciasPorCategoria[categoria]!.map((e) => DropdownMenuItem(
+      items: selectedCategory ? listadoIncidenciasAmbientalesPorCategoria[categoria]!.map((e) => DropdownMenuItem(
         value: e,
         child: Text(e),
       )).toList() : null,
@@ -486,24 +513,39 @@ class _SubirReporteState extends State<SubirReporte> {
             servicios.snackBarError(message: 'Debe agregar una imagen', context: context);
             return;
           }
-
+          bool data2 = false;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Subiendo Reporte...')));
           DateTime fecha = DateTime.now();
           // estampa de tiempo
           String data = await servicios.subirImagen(imagen!,'${fecha.toString()}.png',context);
           if(data != ''){ 
-            bool data2 = await servicios.agregarReporte(
-              incidencia: incidencia,
-              descripcion: descripcion, 
-              fecha: fecha.toString(),
-              ubicacion: edificios, 
-              estado: 'Pendiente', 
-              imagen: data,
-              categoria: categoria,
-              nombreCompleto: servicios.nombre.value,
-              carrera: servicios.carrera.value,
-              numeroControl: servicios.usuario.value,
-            );
+            if(servicios.rfc.value.isEmpty){
+              data2 = await servicios.agregarReporte(
+                incidencia: incidencia,
+                descripcion: descripcion, 
+                fecha: fecha.toString(),
+                ubicacion: edificios, 
+                estado: 'Pendiente', 
+                imagen: data,
+                categoria: categoria,
+                nombreCompleto: servicios.nombre.value,
+                carrera: servicios.carrera.value,
+                numeroControl: servicios.usuario.value,
+              );
+            }else{
+              data2 = await servicios.agregarReporte(
+                incidencia: incidencia,
+                descripcion: descripcion, 
+                fecha: fecha.toString(),
+                ubicacion: edificios, 
+                estado: 'Pendiente', 
+                imagen: data,
+                categoria: categoria,
+                nombreCompleto: servicios.nombre.value,
+                carrera: servicios.carrera.value,
+                numeroControl: servicios.rfc.value,
+              );
+            }
             if(!context.mounted)return;
             if(data2){
               servicios.snackBarSucces(message: 'Reporte subido correctamente', context: context);

@@ -43,7 +43,7 @@ class _CategoriasPageState extends State<CategoriasPage> {
             ListTile(
               title: const Text('Subir reporte'),
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SubirReporte()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SubirReporte(retroceder: true,)));
               },
             ),
             ListTile(

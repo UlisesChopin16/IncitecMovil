@@ -33,6 +33,7 @@ class FirebaseServicesInciTec extends GetxController {
   var verificarTelefono = false.obs;
 
   var usuario = ''.obs;
+  var rfc = ''.obs;
   var nombre = ''.obs;
   var iniciales = ''.obs;
   var email = ''.obs;
@@ -231,6 +232,8 @@ class FirebaseServicesInciTec extends GetxController {
   Future<void> loginUsingEmailPassword({required String numeroControl, required String password, required BuildContext context}) async{
     loading.value = true;
     try{
+      rfc.value = '';
+      carrera.value = '';
       String email = '$numeroControl@tecnamex.com';
       UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
       user = userCredential.user;
@@ -243,7 +246,7 @@ class FirebaseServicesInciTec extends GetxController {
         if(numeroControl.length >= 8 && numeroControl.length <= 9){
           await obtenerDatosAlumno(numeroControl: numeroControl, context: context);
           if(!context.mounted) return;
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SubirReporte()));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SubirReporte(retroceder: false,)));
         }else{
           await obtenerDatosEmpleado(numeroControl: numeroControl, context: context);
           if(!context.mounted) return;
@@ -308,6 +311,7 @@ class FirebaseServicesInciTec extends GetxController {
       obtenerIniciales(datosEmpleado['apellidosNombre'].toString());
       email.value = datosEmpleado['correoInstitucional'].toString();
       nombre.value = datosEmpleado['apellidosNombre'];
+      rfc.value = datosEmpleado['rfc'];
       loading.value = false;
     }catch(e){
       loading.value = false;
