@@ -98,6 +98,7 @@ class FirebaseServicesInciTec extends GetxController {
         "nombreCompleto": nombreCompleto,
         "numeroControl": numeroControl,
         "carrera": carrera,
+        "revisadoPor": "",
       });
       loading.value = false;
       return true;
