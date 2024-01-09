@@ -243,7 +243,7 @@ class FirebaseServicesInciTec extends GetxController {
         if(!context.mounted) return;
         snackBarSucces(message: 'Bienvenido', context: context);
         // Si el largo del numero de control esta entre 8 y 9 entonces es un alumno
-        if(numeroControl.length >= 8 && numeroControl.length <= 9){
+        if(numeroControl.length >= 8 && numeroControl.length <= 10){
           await obtenerDatosAlumno(numeroControl: numeroControl, context: context);
           if(!context.mounted) return;
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SubirReporte(retroceder: false,)));

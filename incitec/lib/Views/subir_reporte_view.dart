@@ -70,7 +70,7 @@ class _SubirReporteState extends State<SubirReporte> {
       'Lavamanos tapado',
       'Lavamanos roto',
       'Inodoro con fuga',
-      'Goteras'
+      'Goteras',
       'Otros',
     ],
     'Sustancias peligrosas': [
