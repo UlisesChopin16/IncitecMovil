@@ -506,9 +506,7 @@ class _SubirReporteState extends State<SubirReporte> {
   botonSubirReporte(){
     return ElevatedButton(
       onPressed: () async {
-        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const CategoriasPage()));
         if(_formKey.currentState!.validate()){
-
           if(imagen == null){
             servicios.snackBarError(message: 'Debe agregar una imagen', context: context);
             return;
@@ -519,33 +517,18 @@ class _SubirReporteState extends State<SubirReporte> {
           // estampa de tiempo
           String data = await servicios.subirImagen(imagen!,'${fecha.toString()}.png',context);
           if(data != ''){ 
-            if(servicios.rfc.value.isEmpty){
-              data2 = await servicios.agregarReporte(
-                incidencia: incidencia,
-                descripcion: descripcion, 
-                fecha: fecha.toString(),
-                ubicacion: edificios, 
-                estado: 'Pendiente', 
-                imagen: data,
-                categoria: categoria,
-                nombreCompleto: servicios.nombre.value,
-                carrera: servicios.carrera.value,
-                numeroControl: servicios.usuario.value,
-              );
-            }else{
-              data2 = await servicios.agregarReporte(
-                incidencia: incidencia,
-                descripcion: descripcion, 
-                fecha: fecha.toString(),
-                ubicacion: edificios, 
-                estado: 'Pendiente', 
-                imagen: data,
-                categoria: categoria,
-                nombreCompleto: servicios.nombre.value,
-                carrera: servicios.carrera.value,
-                numeroControl: servicios.rfc.value,
-              );
-            }
+            data2 = await servicios.agregarReporte(
+              incidencia: incidencia,
+              descripcion: descripcion, 
+              fecha: fecha.toString(),
+              ubicacion: edificios, 
+              estado: 'Pendiente', 
+              imagen: data,
+              categoria: categoria,
+              nombreCompleto: servicios.nombre.value,
+              carrera: servicios.carrera.value,
+              numeroControl: servicios.usuario.value,
+            );
             if(!context.mounted)return;
             if(data2){
               servicios.snackBarSucces(message: 'Reporte subido correctamente', context: context);

@@ -33,7 +33,6 @@ class FirebaseServicesInciTec extends GetxController {
   var verificarTelefono = false.obs;
 
   var usuario = ''.obs;
-  var rfc = ''.obs;
   var nombre = ''.obs;
   var iniciales = ''.obs;
   var email = ''.obs;
@@ -233,7 +232,6 @@ class FirebaseServicesInciTec extends GetxController {
   Future<void> loginUsingEmailPassword({required String numeroControl, required String password, required BuildContext context}) async{
     loading.value = true;
     try{
-      rfc.value = '';
       carrera.value = '';
       String email = '$numeroControl@tecnamex.com';
       UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
@@ -312,7 +310,6 @@ class FirebaseServicesInciTec extends GetxController {
       obtenerIniciales(datosEmpleado['apellidosNombre'].toString());
       email.value = datosEmpleado['correoInstitucional'].toString();
       nombre.value = datosEmpleado['apellidosNombre'];
-      rfc.value = datosEmpleado['rfc'];
       loading.value = false;
     }catch(e){
       loading.value = false;
