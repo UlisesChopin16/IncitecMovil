@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,8 +20,7 @@ class FirebaseServicesInciTec extends GetxController {
   FirebaseAuth auth = FirebaseAuth.instance;
 
 
-  var datosAlumno = <String,dynamic>{}.obs;
-  var datosEmpleado = <String,dynamic>{}.obs;
+  var datosUsuario = <String,dynamic>{}.obs;
   var datosCarrera = <String,dynamic>{}.obs;
 
   var listaPorcentajes = <double>[].obs;
@@ -31,6 +31,11 @@ class FirebaseServicesInciTec extends GetxController {
 
   var loading = false.obs;
   var verificarTelefono = false.obs;
+  var activo = false.obs;
+  var estudiante = false.obs;
+  var administrativoR = false.obs;
+  var jefeR = false.obs;
+  var empleado = false.obs;
 
   var usuario = ''.obs;
   var nombre = ''.obs;
@@ -232,24 +237,48 @@ class FirebaseServicesInciTec extends GetxController {
   Future<void> loginUsingEmailPassword({required String numeroControl, required String password, required BuildContext context}) async{
     loading.value = true;
     try{
+      usuario.value = '';
+      nombre.value = '';
+      iniciales.value = '';
+      email.value = '';
       carrera.value = '';
-      String email = '$numeroControl@tecnamex.com';
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
+      String correo = '$numeroControl@tecnamex.com';
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(email: correo, password: password);
       user = userCredential.user;
       if(user != null){
         usuario.value = numeroControl;
         loading.value = false;
+        
+        // Verificar el tipo de usuario (Estudiante, Jefe de Recursos Materiales, Administrativo de Recursos Materiales, Docente, Administrativo)
         if(!context.mounted) return;
-        snackBarSucces(message: 'Bienvenido', context: context);
-        // Si el largo del numero de control esta entre 8 y 9 entonces es un alumno
-        if(numeroControl.length >= 8 && numeroControl.length <= 10){
-          await obtenerDatosAlumno(numeroControl: numeroControl, context: context);
+        await verificarTipoUsuario(numeroControl: usuario.value, context: context);
+        if(!activo.value){
+          loading.value = false;
           if(!context.mounted) return;
+          snackBarError(message: 'Lo sentimos, no puedes ingresar al sistema', context: context);
+          return;
+        }
+        
+        if(!context.mounted) return;
+        if(estudiante.value){
+          await obtenerDatosAlumno(numeroControl: usuario.value, context: context);
+          if(!context.mounted) return;
+          snackBarSucces(message: 'Bienvenido', context: context);
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SubirReporte(retroceder: false,)));
-        }else{
-          await obtenerDatosEmpleado(numeroControl: numeroControl, context: context);
+        }
+
+        else if (jefeR.value || administrativoR.value) {
+          await obtenerDatosEmpleado(numeroControl: usuario.value, context: context);
           if(!context.mounted) return;
+          snackBarSucces(message: 'Bienvenido', context: context);
           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const CategoriasPage()));
+        }
+        // sino es estudiante ni jefe de recursos materiales entonces es un empleado (Docente o Administrativo)
+        else if (empleado.value){
+          await obtenerDatosEmpleado(numeroControl: usuario.value, context: context);
+          if(!context.mounted) return;
+          snackBarSucces(message: 'Bienvenido', context: context);
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const SubirReporte(retroceder: false,)));
         }
 
       }else{
@@ -263,6 +292,49 @@ class FirebaseServicesInciTec extends GetxController {
       snackBarError(message: 'Algo salio mal, por favor intente de nuevo más tarde', context: context);
     }
   }
+  
+  Future<void> verificarTipoUsuario({required String numeroControl, required BuildContext context}) async{
+    String collection = '/itz/tecnamex/';
+    loading.value = true;
+    try {
+      jefeR.value = false;
+      administrativoR.value = false;
+      empleado.value = false;
+      estudiante.value = false;
+      collection += 'usuarios';
+      DocumentSnapshot ds = await firestore.collection(collection).doc(numeroControl).get();
+      Map<String, dynamic> datosEmpleado = ds.data() as Map<String, dynamic>;
+      // Verificar si el usuario esta activo
+      activo.value = datosEmpleado['activo'];
+      if(!activo.value){
+        return ;
+      }
+
+      // verificamos el tipo de usuario que quiere ingresar al sistema
+      List<String> permisos = datosEmpleado['permisos'].cast<String>();
+      for(int i = 0; i < permisos.length; i++){
+        if(permisos[i] == 'Estudiante'){
+          estudiante.value = true;
+          return;
+        }
+        if (permisos[i] == 'Docente' || permisos[i] == 'Administrativo') {
+          empleado.value = true;
+        }
+        if(permisos[i] == 'JefeRecursosMateriales'){
+          jefeR.value = true;
+          break;
+        }
+        if(permisos[i] == 'AdministrativoRecursosMateriales'){
+          administrativoR.value = true;
+          break;
+        }
+      }
+    } catch (e) {
+      loading.value = false;
+      if(!context.mounted) return;
+      snackBarError(message: 'Algo salio mal, por favor intente de nuevo más tarde', context: context);
+    }
+  }
 
   Future<void> obtenerDatosAlumno({required String numeroControl, required BuildContext context}) async{
     String collection = '/itz/tecnamex/';
@@ -270,17 +342,19 @@ class FirebaseServicesInciTec extends GetxController {
     try{
       collection += 'estudiantes';
       DocumentSnapshot ds = await firestore.collection(collection).doc(numeroControl).get();
-      datosAlumno.value = ds.data() as Map<String, dynamic>;
+      datosUsuario.value = ds.data() as Map<String, dynamic>;
       obtenerPeriodoEscolar();
       obtenerNumero();
-      obtenerIniciales(datosAlumno['apellidosNombre'].toString());
-      email.value = datosAlumno['correoInstitucional'].toString();
+      obtenerIniciales(datosUsuario['apellidosNombre'].toString());
+      email.value = datosUsuario['correoInstitucional'].toString();
       if(!context.mounted) return;
-      await obtenerCarrera(collection: 'planes', id: datosAlumno['clavePlanEstudios'].toString(),context: context);
-      nombre.value = datosAlumno['apellidosNombre'];
+      await obtenerCarrera(collection: 'planes', id: datosUsuario['clavePlanEstudios'].toString(),context: context);
+      nombre.value = datosUsuario['apellidosNombre'];
       loading.value = false;
     }catch(e){
       loading.value = false;
+      if(!context.mounted) return;
+      snackBarError(message: 'Algo salio mal, por favor intente de nuevo más tarde', context: context);
     }
   }
 
@@ -305,8 +379,8 @@ class FirebaseServicesInciTec extends GetxController {
     loading.value = true;
     try{
       collection += 'empleados';
-      DocumentSnapshot ds = await firestore.collection(collection).doc(numeroControl).get();
-      datosEmpleado.value = ds.data() as Map<String, dynamic>;
+      QuerySnapshot querySnapshot = await firestore.collection(collection).where('rfc',isEqualTo: numeroControl).get();
+      Map<String, dynamic> datosEmpleado = querySnapshot.docs[0].data() as Map<String, dynamic>;
       obtenerIniciales(datosEmpleado['apellidosNombre'].toString());
       email.value = datosEmpleado['correoInstitucional'].toString();
       nombre.value = datosEmpleado['apellidosNombre'];
@@ -322,9 +396,9 @@ class FirebaseServicesInciTec extends GetxController {
   // 20221 significa que el periodo escolar se comprende desde Ene - Jun 2022
   // en el arreglo esta un campo llamado periodoIngreso donde se encuentra este dato
   obtenerPeriodoEscolar(){
-    periodoIngreso.value = datosAlumno['periodoIngreso'].toString();
-    String periodoYear = datosAlumno['periodoIngreso'].toString().substring(0, 4);
-    String periodoMes = datosAlumno['periodoIngreso'].toString().substring(4, 5);
+    periodoIngreso.value = datosUsuario['periodoIngreso'].toString();
+    String periodoYear = datosUsuario['periodoIngreso'].toString().substring(0, 4);
+    String periodoMes = datosUsuario['periodoIngreso'].toString().substring(4, 5);
     if(periodoMes == '1'){
       periodo.value = 'ENE - JUN $periodoYear';
     }else if(periodoMes == '2'){
@@ -336,7 +410,7 @@ class FirebaseServicesInciTec extends GetxController {
 
   obtenerNumero(){
     // sacar la penultima posicion del arreglo;
-    telefono.value = datosAlumno['celular'].toString();
+    telefono.value = datosUsuario['celular'].toString();
     if(telefono.value.isEmpty){
       verificarTelefono.value = true;
     }else{

@@ -46,14 +46,15 @@ class _CategoriasPageState extends State<CategoriasPage> {
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SubirReporte(retroceder: true,)));
               },
             ),
-            ListTile(
-              title: const Text('Estadisticas'),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const GraficosPage())
-                );
-              },
-            ),
+            if(servicios.jefeR.value)
+              ListTile(
+                title: const Text('Estadisticas'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const GraficosPage())
+                  );
+                },
+              ),
             ListTile(
               title: const Text('Cerrar Sesión'),
               onTap: () {

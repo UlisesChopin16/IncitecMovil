@@ -158,7 +158,7 @@ class _InfoReportesPageState extends State<InfoReportesPage> {
               },
               icon: const Icon(Icons.picture_as_pdf)
             ),
-            if(!cambioEstado)
+            if(!cambioEstado && servicios.jefeR.value)
               IconButton(
                 onPressed: () => mostrarDialogo(context),
                 icon: const Icon(Icons.check)
